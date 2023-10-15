@@ -4,6 +4,7 @@ from shiny import Inputs, Outputs, Session, ui, module, render, reactive
 from gcode_web.output.gcode_config import GCodeConfig
 from gcode_web.options.job_options import job_options_ui, job_options_server
 from gcode_web.options.tool_options import tool_options_ui, tool_options_server
+from gcode_web.operation.circular_pocket import CircularPocketConfig, circular_pocket_ui, circular_pocket_server
 
 
 def _create_job_ui(job_name: str, job: GCodeConfig):
@@ -17,7 +18,8 @@ def _create_job_ui(job_name: str, job: GCodeConfig):
     index += 1
 
     for config in job.operations:
-        # Create operation UI
+        if isinstance(config, CircularPocketConfig):
+            names_and_uis.append((config.display_name, circular_pocket_ui(id=f'{job_name}_{index}', config=config)))
         index += 1
 
     return ui.nav(
@@ -69,7 +71,8 @@ def config_panel_server(input: Inputs, output: Outputs, session: Session, job_co
             config_index += 1
 
             for config in job.operations:
-                # Create operation server
+                if isinstance(config, CircularPocketConfig):
+                    circular_pocket_server(id=f'job_name_{job_index}_{config_index}', config=config)
                 config_index += 1
             job_index += 1
 
