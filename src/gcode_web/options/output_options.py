@@ -3,38 +3,6 @@ from shiny import Inputs, Outputs, Session, ui, module, reactive, render_text, r
 from conversational_gcode.options.OutputOptions import OutputOptions
 
 
-class OutputOptionsConfig:
-
-    def __init__(self):
-        self._position_precision = 3
-        self._feed_precision = 2
-        self._speed_precision = 1
-
-    def _set_position_precision(self, value):
-        self._position_precision = value
-
-    def _set_feed_precision(self, value):
-        self._feed_precision = value
-
-    def _set_speed_precision(self, value):
-        self._speed_precision = value
-
-    position_precision = property(
-        fget=lambda self: self._position_precision,
-        fset=_set_position_precision
-    )
-
-    feed_precision = property(
-        fget=lambda self: self._feed_precision,
-        fset=_set_feed_precision
-    )
-
-    speed_precision = property(
-        fget=lambda self: self._speed_precision,
-        fset=_set_speed_precision
-    )
-
-
 @module.ui
 def output_options_ui():
     return ui.div(
@@ -49,8 +17,7 @@ def output_options_ui():
 
 
 @module.server
-def output_options_server(input: Inputs, output: Outputs, session: Session, config: OutputOptionsConfig):
-    operation = reactive.Value()
+def output_options_server(input: Inputs, output: Outputs, session: Session, config: OutputOptions):
     error_msg = reactive.Value('')
 
     ui.update_numeric(id='position_precision', value=config.position_precision)
@@ -72,16 +39,14 @@ def output_options_server(input: Inputs, output: Outputs, session: Session, conf
     @reactive.Effect
     @reactive.event(input.position_precision, input.feed_precision, input.speed_precision)
     def calculate_operation():
-        try:
+        results = list(filter(lambda result: not result.success, config.validate()))
+
+        if len(results) == 0:
             error_msg.set('')
-            operation.set(OutputOptions(config.position_precision, config.feed_precision, config.speed_precision))
-        except ValueError as exptn:
-            error_msg.set(str(exptn))
-            operation.set(None)
+        else:
+            error_msg.set(results[0].message)
 
     @output
     @render.text
     def error():
         return error_msg.get()
-
-    return operation
