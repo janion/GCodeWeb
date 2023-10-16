@@ -88,4 +88,10 @@ def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tabs
             index += 1
         gcode_files.set(gcode_jobs)
 
+    @reactive.Effect
+    @reactive.event(input.clear_btn)
+    def _clear():
+        job_configurations.set([])
+        gcode_files.set([])
+
     return gcode_files
