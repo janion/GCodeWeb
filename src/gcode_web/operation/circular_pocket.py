@@ -12,7 +12,7 @@ def circular_pocket_ui(config: CircularPocket):
         ui.input_numeric(id='start_depth', label='Start Depth', value=config.start_depth),
         ui.input_numeric(id='diameter', label='Diameter', value=config.diameter),
         ui.input_numeric(id='depth', label='Depth', value=config.depth),
-        ui.input_checkbox(id='finishing_pass', label='Finishing Pass', value=config.finishing_pass),
+        ui.input_checkbox(id='finishing_pass', label='Has Finishing Pass', value=config.finishing_pass),
         ui.div(
             ui.output_text(id='error'),
             style='color: red; font-style: italic;'

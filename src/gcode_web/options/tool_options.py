@@ -19,7 +19,7 @@ def tool_options_ui(config: ToolOptions):
         ui.input_numeric(id='helix_feed_rate', label='Helical Feed Rate', value=config.helix_feed_rate),
         ui.input_numeric(id='max_helix_angle', label='Max Helix Angle', value=config.max_helix_angle),
 
-        ui.input_checkbox(id='finishing_pass', label='Has Finishing Pass', value=config.finishing_pass),
+        ui.input_numeric(id='finishing_pass', label='Finishing Pass Stepover', value=config.finishing_pass),
         ui.input_numeric(id='finishing_feed_rate', label='Finishing Feed Rate', value=config.finishing_feed_rate),
         ui.input_checkbox(id='finishing_climb', label='Finishing Pass is Climb', value=config.finishing_climb),
 
