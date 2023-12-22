@@ -47,7 +47,7 @@ def sidebar_ui():
 
 
 @module.server
-def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tab, job_configurations):
+def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tab, job_configurations, invalidated_job):
     output_options = OutputOptions()
     output_options_server(id='output_options', config=output_options)
 
@@ -68,9 +68,10 @@ def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tab,
         job = next(job_config for job_config in job_configurations.get() if job_config.id == job_id)
         job.operations.append(operation)
 
-        tmp = job_configurations.get()
-        job_configurations.set([])
-        job_configurations.set(tmp)
+        # tmp = job_configurations.get()
+        # job_configurations.set([])
+        # job_configurations.set(tmp)
+        invalidated_job.set(job_id)
 
     gcode_files = reactive.Value([])
 

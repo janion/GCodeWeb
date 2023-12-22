@@ -14,8 +14,7 @@ _job_options_display_name = 'Job Options'
 _tool_options_display_name = 'Tool Options'
 
 
-@module.ui
-def job_config_panel_ui(job: GCodeConfig):
+def _render_panel(job: GCodeConfig):
     names_and_uis = []
     config_index = 0
 
@@ -35,32 +34,63 @@ def job_config_panel_ui(job: GCodeConfig):
     )
 
 
+@module.ui
+def job_config_panel_ui(job: GCodeConfig):
+    return ui.output_ui(id='content')
+
+
 @module.server
-def job_config_panel_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names, recalculate_job_names):
-    config_index = 0
-    job_name = job_options_server(
-        id=f'job_{job.id}_{config_index}',
-        config=job.job_config,
-        job_names=job_names
-    )
-    config_index += 1
+def job_config_panel_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names: list, recalculate_job_names: reactive.Value, invalidated_job: reactive.Value):
 
-    tool_options_server(id=f'job_{job.id}_{config_index}', config=job.tool_config)
-    config_index += 1
-
-    for config in job.operations:
-        if isinstance(config, CircularPocket):
-            circular_pocket_server(id=f'job_{job.id}_{config_index}', config=config)
-        config_index += 1
+    invalidatable_job = reactive.Value(job)
+    set_job_name = reactive.Value(job.job_config.name)
 
     @reactive.Effect
-    @reactive.event(job_name)
-    def _force_job_names_recalculation():
-        recalculate_job_names.set(True)
+    @reactive.event(invalidated_job)
+    def _invalidate_job():
+        if invalidated_job() == job.id:
+            invalidatable_job.set(None)
+            invalidatable_job.set(job)
 
     @output
-    @render.text
-    def title():
-        return job_name.get()
+    @render.ui
+    def content():
+        return _render_panel(invalidatable_job.get())
 
-    return job_name
+
+    @reactive.Effect
+    @reactive.event(invalidatable_job)
+    def _install_servers():
+        config_index = 0
+        job_name = job_options_server(
+            id=f'job_{job.id}_{config_index}',
+            config=job.job_config,
+            job_names=job_names
+        )
+
+        @reactive.Effect
+        @reactive.event(job_name)
+        def update_job_name():
+            set_job_name.set(job_name())
+
+        config_index += 1
+
+        tool_options_server(id=f'job_{job.id}_{config_index}', config=job.tool_config)
+        config_index += 1
+
+        for config in job.operations:
+            if isinstance(config, CircularPocket):
+                circular_pocket_server(id=f'job_{job.id}_{config_index}', config=config)
+            config_index += 1
+
+        @reactive.Effect
+        @reactive.event(job_name)
+        def _force_job_names_recalculation():
+            recalculate_job_names.set(True)
+
+        @output
+        @render.text
+        def title():
+            return job_name.get()
+
+    return set_job_name

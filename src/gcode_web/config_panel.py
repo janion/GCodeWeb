@@ -22,7 +22,7 @@ def config_panel_ui():
 
 
 @module.server
-def config_panel_server(input: Inputs, output: Outputs, session: Session, job_configurations):
+def config_panel_server(input: Inputs, output: Outputs, session: Session, job_configurations, invalidated_job):
     @output
     @render.ui
     def panel():
@@ -54,7 +54,13 @@ def config_panel_server(input: Inputs, output: Outputs, session: Session, job_co
         jobs = job_configurations.get()
         last_job_id = None
         for job in jobs:
-            job_config_tab_server(id=f'job_{job.id}', job=job, job_names=job_names, recalculate_job_names=recalculate_job_names)
+            job_config_tab_server(
+                id=f'job_{job.id}',
+                job=job,
+                job_names=job_names,
+                recalculate_job_names=recalculate_job_names,
+                invalidated_job=invalidated_job
+            )
             last_job_id = job.id
 
         # Select the final tab

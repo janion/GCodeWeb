@@ -13,12 +13,13 @@ def job_config_tab_ui(job: GCodeConfig):
 
 
 @module.server
-def job_config_tab_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names, recalculate_job_names):
+def job_config_tab_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names: list, recalculate_job_names: reactive.Value, invalidated_job: reactive.Value):
     job_name = job_config_panel_server(
         id='config_panel',
         job=job,
         job_names=job_names,
-        recalculate_job_names=recalculate_job_names
+        recalculate_job_names=recalculate_job_names,
+        invalidated_job=invalidated_job
     )
 
     @output
