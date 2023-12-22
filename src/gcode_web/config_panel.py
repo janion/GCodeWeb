@@ -56,14 +56,15 @@ def config_panel_server(input: Inputs, output: Outputs, session: Session, job_co
     @reactive.Effect
     @reactive.event(job_configurations)
     def _install_servers():
-        job_index = 0
         jobs = job_configurations.get()
-        last_job_name = None
+        last_job_id = None
         for job in jobs:
-            last_job_name = job_config_panel_server(id=f'job_{job.id}', job=job, job_names=job_names, recalculate_job_names=recalculate_job_names).get()
+            job_config_panel_server(id=f'job_{job.id}', job=job, job_names=job_names, recalculate_job_names=recalculate_job_names)
+            last_job_id = job.id
 
         # Select the final tab
-        if last_job_name is not None:
-            ui.update_navs(id='config_tabs', selected=last_job_name)
+        if last_job_id is not None:
+            # TODO this is a bodge, but it kinda works for now
+            ui.update_navs(id='config_tabs', selected=f'<div id="config_panel-job_{last_job_id}-title" class="shiny-text-output"></div>')
 
     return input.config_tabs
