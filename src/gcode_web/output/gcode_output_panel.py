@@ -1,5 +1,6 @@
-import shiny.experimental as x
-from shiny import Inputs, Outputs, Session, ui, module, render
+from shiny import Inputs, Outputs, Session, ui, module, render, reactive
+
+from gcode_web.output.gcode_file_output_panel import gcode_file_output_panel_ui, gcode_file_output_panel_server
 
 
 @module.ui
@@ -23,7 +24,12 @@ def gcode_output_panel_server(input: Inputs, output: Outputs, session: Session, 
             return ui.navset_tab(
                 *[ui.nav(
                     file.name,
-                    ui.download_button(id=f'download_{file.title}', label="Download"),
-                    [[ui.br(), line] for line in file.lines]
+                    gcode_file_output_panel_ui(id=f'output_{file.title}')
                 ) for file in files]
             )
+
+    @reactive.Effect
+    @reactive.event(generated_files)
+    def _install_servers():
+        for file in generated_files.get():
+            gcode_file_output_panel_server(id=f'output_{file.title}', generated_file=file)
