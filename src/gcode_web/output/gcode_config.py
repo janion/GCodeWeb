@@ -4,7 +4,11 @@ from conversational_gcode.options.ToolOptions import ToolOptions
 
 class GCodeConfig:
 
+    _ID = 0
+
     def __init__(self):
+        self._id = GCodeConfig._ID
+        GCodeConfig._ID += 1
         self._job_config = JobOptions()
         self._tool_config = ToolOptions()
         self._operations = []
@@ -12,6 +16,9 @@ class GCodeConfig:
     def _set_tool_config(self, tool_config):
         self._tool_config = tool_config
 
+    id = property(
+        fget=lambda self: self._id
+    )
     job_config = property(
         fget=lambda self: self._job_config
     )

@@ -1,4 +1,4 @@
-from shiny import Inputs, Outputs, Session, ui, module, reactive, render_text, render
+from shiny import Inputs, Outputs, Session, ui, module, reactive, render
 
 from conversational_gcode.options.OutputOptions import OutputOptions
 

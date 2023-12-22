@@ -17,13 +17,14 @@ def job_options_ui(config: JobOptions):
 
 
 @module.server
-def job_options_server(input: Inputs, output: Outputs, session: Session, config: JobOptions, job_names, recalculate_job_names):
+def job_options_server(input: Inputs, output: Outputs, session: Session, config: JobOptions, job_names):
     error_msg = reactive.Value('')
+    job_name = reactive.Value(config.name)
 
     @reactive.Effect(priority=1)
     def set_name():
         config.name = input.job_name()
-        recalculate_job_names.set(True)
+        job_name.set(input.job_name())
 
     @reactive.Effect(priority=1)
     def set_clearance_height():
@@ -52,3 +53,5 @@ def job_options_server(input: Inputs, output: Outputs, session: Session, config:
     @render.text
     def error():
         return error_msg.get()
+
+    return job_name

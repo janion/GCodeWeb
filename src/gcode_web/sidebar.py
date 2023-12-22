@@ -1,3 +1,5 @@
+from re import search
+
 import shiny.experimental as x
 from shiny import Inputs, Outputs, Session, ui, module, reactive
 
@@ -60,7 +62,9 @@ def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tabs
         operation = get_type(input.operation_type())()
 
         # TODO This should not be hard-coded
-        job_index = int(config_tabs()[-1])
+        match = search('config_panel-job_([0-9]+)-title', config_tabs())
+        job_id = int(match.group(1))
+        job_index = job_id
 
         job = job_configurations.get()[job_index]
         job.operations.append(operation)
@@ -83,8 +87,7 @@ def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tabs
                 generator.add_operation(op)
 
             commands = [command.format(output_options) for command in generator.generate()]
-            # TODO this should not be hard-coded
-            gcode_jobs.append(GcodeFile(f'job_name_{index}', commands))
+            gcode_jobs.append(GcodeFile(job.job_config.name, commands))
             index += 1
         gcode_files.set(gcode_jobs)
 
