@@ -6,6 +6,6 @@ This is a web app wrapping the [Conversational GCode](github.com/janion/Conversa
 - [ ] Allow for custom naming of jobs (and files)
 - [ ] Allow removal of operations
 - [X] Hook-up download buttons for generated files
-- [ ] Add "Download All" button for generated files
+- [X] Add "Download All" button for generated files
 - [ ] Add save and load functionality for configurations
 - [ ] Add the other operations
