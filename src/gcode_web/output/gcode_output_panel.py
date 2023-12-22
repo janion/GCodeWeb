@@ -13,6 +13,7 @@ def gcode_output_panel_server(input: Inputs, output: Outputs, session: Session, 
     @render.ui
     def panel():
         files = generated_files.get()
+
         if len(files) == 0:
             return ui.div(
                 ui.p('No files generated'),
@@ -22,6 +23,7 @@ def gcode_output_panel_server(input: Inputs, output: Outputs, session: Session, 
             return ui.navset_tab(
                 *[ui.nav(
                     file.name,
-                    *[ui.p(line) for line in file.lines]
+                    ui.download_button(id=f'download_{file.title}', label="Download"),
+                    [[ui.br(), line] for line in file.lines]
                 ) for file in files]
             )

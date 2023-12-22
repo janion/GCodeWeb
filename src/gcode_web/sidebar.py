@@ -25,7 +25,6 @@ def _create_new_job():
 def sidebar_ui():
     return x.ui.sidebar(
         ui.input_action_button(id='clear_btn', label='Clear'),
-        ui.input_action_button(id='load_jobs_btn', label='Load Jobs'),
         ui.input_action_button(id='new_job_btn', label='New Job'),
         ui.hr(),
         ui.input_select(
@@ -40,7 +39,8 @@ def sidebar_ui():
             output_options_ui(id='output_options')
         ),
         ui.input_action_button(id='generate_gcode_btn', label='Generate GCode'),
-        ui.input_action_button(id='save_jobs_btn', label='Save Jobs')
+        # ui.download_button(id='save_jobs_btn', label='Save Jobs'),
+        # ui.input_action_button(id='load_jobs_btn', label='Load Jobs')
     )
 
 
@@ -84,7 +84,7 @@ def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tabs
 
             commands = [command.format(output_options) for command in generator.generate()]
             # TODO this should not be hard-coded
-            gcode_jobs.append(GcodeFile(f'job_name_{index}.nc', commands))
+            gcode_jobs.append(GcodeFile(f'job_name_{index}', commands))
             index += 1
         gcode_files.set(gcode_jobs)
 
