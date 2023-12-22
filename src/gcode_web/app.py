@@ -27,8 +27,8 @@ app_ui = x.ui.page_sidebar(
 def app_server(input: Inputs, output: Outputs, session: Session):
     job_configurations = reactive.Value([])
 
-    config_tabs = config_panel_server(id='config_panel', job_configurations=job_configurations)
-    generated_files = sidebar_server(id='sidebar', config_tabs=config_tabs, job_configurations=job_configurations)
+    config_tab = config_panel_server(id='config_panel', job_configurations=job_configurations)
+    generated_files = sidebar_server(id='sidebar', config_tab=config_tab, job_configurations=job_configurations)
     gcode_output_panel_server(id='gcode_panel', generated_files=generated_files)
 
 

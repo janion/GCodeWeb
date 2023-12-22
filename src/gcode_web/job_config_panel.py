@@ -10,7 +10,6 @@ from gcode_web.operation.display_names import get_display_name
 from conversational_gcode.operations.CircularPocket import CircularPocket
 
 
-_output_options_display_name = 'Output Options'
 _job_options_display_name = 'Job Options'
 _tool_options_display_name = 'Tool Options'
 
@@ -31,11 +30,8 @@ def job_config_panel_ui(job: GCodeConfig):
             names_and_uis.append((get_display_name(type(config)), circular_pocket_ui(id=f'job_{job.id}_{config_index}', config=config)))
         config_index += 1
 
-    return ui.nav(
-        ui.output_text(id='title'),
-        x.ui.accordion(
-            *[x.ui.accordion_panel(name, each_ui) for name, each_ui in names_and_uis]
-        )
+    return x.ui.accordion(
+        *[x.ui.accordion_panel(name, each_ui) for name, each_ui in names_and_uis]
     )
 
 

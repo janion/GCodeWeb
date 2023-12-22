@@ -1,18 +1,13 @@
 from shiny import Inputs, Outputs, Session, ui, module, render, reactive
 
-from gcode_web.job_config_panel import job_config_panel_ui, job_config_panel_server
-
-
-_output_options_display_name = 'Output Options'
-_job_options_display_name = 'Job Options'
-_tool_options_display_name = 'Tool Options'
+from gcode_web.job_config_tab import job_config_tab_ui, job_config_tab_server
 
 
 def _create_jobs_navs(jobs: list):
     navs = []
     index = 0
     for job in jobs:
-        navs.append(job_config_panel_ui(id=f'job_{job.id}', job=job))
+        navs.append(job_config_tab_ui(id=f'job_{job.id}', job=job))
         index += 1
 
     return ui.navset_tab(
@@ -59,7 +54,7 @@ def config_panel_server(input: Inputs, output: Outputs, session: Session, job_co
         jobs = job_configurations.get()
         last_job_id = None
         for job in jobs:
-            job_config_panel_server(id=f'job_{job.id}', job=job, job_names=job_names, recalculate_job_names=recalculate_job_names)
+            job_config_tab_server(id=f'job_{job.id}', job=job, job_names=job_names, recalculate_job_names=recalculate_job_names)
             last_job_id = job.id
 
         # Select the final tab
