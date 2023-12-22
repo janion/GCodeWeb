@@ -47,7 +47,7 @@ def sidebar_ui():
 
 
 @module.server
-def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tabs, job_configurations):
+def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tab, job_configurations):
     output_options = OutputOptions()
     output_options_server(id='output_options', config=output_options)
 
@@ -62,11 +62,10 @@ def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tabs
         operation = get_type(input.operation_type())()
 
         # TODO This should not be hard-coded
-        match = search('config_panel-job_([0-9]+)-title', config_tabs())
+        match = search('config_panel-job_([0-9]+)-title', config_tab())
         job_id = int(match.group(1))
-        job_index = job_id
 
-        job = job_configurations.get()[job_index]
+        job = next(job_config for job_config in job_configurations.get() if job_config.id == job_id)
         job.operations.append(operation)
 
         tmp = job_configurations.get()
