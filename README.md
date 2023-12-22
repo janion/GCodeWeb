@@ -10,3 +10,4 @@ This is a web app wrapping the [Conversational GCode](github.com/janion/Conversa
 - [X] Add "Download All" button for generated files
 - [ ] Add save and load functionality for configurations
 - [ ] Add the other operations
+- [ ] Add tool options to validation in app
