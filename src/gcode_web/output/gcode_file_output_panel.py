@@ -15,7 +15,17 @@ def gcode_file_output_panel_server(input: Inputs, output: Outputs, session: Sess
     @output
     @render.ui
     def file_contents():
-        return [[ui.br(), line] for line in generated_file.lines]
+        content = []
+        for line in generated_file.lines:
+            content.append(ui.br())
+
+            # Display comment after first ';' in green
+            split = line.split(';')
+            content.append(split[0])
+            content.append(';')
+            comment = ';'.join(split[1:])
+            content.append(ui.div(comment, {'style': 'color: #447744; display: inline-block'}))
+        return content
 
     @session.download(filename=generated_file.name)
     async def download_btn():
