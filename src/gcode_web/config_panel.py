@@ -1,66 +1,63 @@
-from shiny import Inputs, Outputs, Session, ui, module, render, reactive
+from re import search
 
-from gcode_web.job_config_tab import job_config_tab_ui, job_config_tab_server
+from shiny import Inputs, Outputs, Session, ui, reactive, render, module
 
-
-def _create_jobs_navs(jobs: list):
-    navs = []
-    last_job_id = None
-    for job in jobs:
-        navs.append(job_config_tab_ui(id=f'job_{job.id}', job=job))
-        last_job_id = job.id
-
-    return ui.navset_tab(
-        *navs,
-        id='config_tabs',
-        # TODO this is a bodge, but it kinda works for now
-        selected=f'<div id="config_panel-job_{last_job_id}-title" class="shiny-text-output"></div>'
-    )
+from gcode_web.output.gcode_config import GCodeConfig
+from gcode_web.job_config_tab import job_tab_ui, job_tab_server
 
 
 @module.ui
-def config_panel_ui():
-    return ui.output_ui(id='panel')
+def jobs_panel_ui():
+    return ui.output_ui(id='tabs')
 
 
 @module.server
-def config_panel_server(input: Inputs, output: Outputs, session: Session, job_configurations, invalidated_job):
-    @output
-    @render.ui
-    def panel():
-        jobs = job_configurations.get()
-        return _create_jobs_navs(jobs)
-
-    # Reactive value so that individual jobs can react to other job names changing
+def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: reactive.Value[list[GCodeConfig]], modified_job_id: reactive.Value[int]):
     job_names = reactive.Value([])
-    # Reactive value to allow for manual triggering of job name recalculation
     recalculate_job_names = reactive.Value(False)
 
     @reactive.Effect
-    @reactive.event(job_configurations)
-    def calculate_job_names_on_jobs_change():
-        """Recalculate job names when job list changes"""
-        job_names.set([job.job_config.name for job in job_configurations.get()])
-
-    @reactive.Effect
     @reactive.event(recalculate_job_names)
-    def calculate_job_names_manually():
-        """Recalculate job names when manual trigger reactive value set to True"""
+    def _manually_recalculate_job_names():
         if recalculate_job_names.get():
+            job_names.set([job.job_config.name for job in jobs.get()])
             recalculate_job_names.set(False)
-            job_names.set([job.job_config.name for job in job_configurations.get()])
+
+    @output
+    @render.ui
+    def tabs():
+        navs = []
+        last_job_id = 0
+        for job in jobs.get():
+            navs.append(job_tab_ui(id=f'tab_{job.id}', job=job))
+            last_job_id = job.id
+        return ui.navset_tab(
+            *navs,
+            id='tabs',
+            # Select final tab
+            selected=f'tab_{last_job_id}'
+        )
 
     @reactive.Effect
-    @reactive.event(job_configurations)
     def _install_servers():
-        jobs = job_configurations.get()
-        for job in jobs:
-            job_config_tab_server(
-                id=f'job_{job.id}',
-                job=job,
-                job_names=job_names,
-                recalculate_job_names=recalculate_job_names,
-                invalidated_job=invalidated_job
-            )
+        for job in jobs.get():
+            job_name = job_tab_server(id=f'tab_{job.id}', job=job, job_names=job_names)
 
-    return input.config_tabs
+            @reactive.Effect
+            @reactive.event(job_name)
+            def _job_name_changed():
+                recalculate_job_names.set(True)
+
+    @reactive.Effect
+    def _select_tab():
+        ui.update_navs(id='tabs', selected=f'tab_{modified_job_id.get()}')
+        modified_job_id.set(None)
+
+    @reactive.Calc
+    def selected_job_id():
+        match = search('tab_([0-9]+)', input.tabs())
+        if match is None:
+            return None
+        return int(match.group(1))
+
+    return selected_job_id

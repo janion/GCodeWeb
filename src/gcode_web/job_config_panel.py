@@ -1,4 +1,4 @@
-from shiny import Inputs, Outputs, Session, ui, module, render, reactive
+from shiny import App, Inputs, Outputs, Session, ui, reactive, render, module
 
 from gcode_web.output.gcode_config import GCodeConfig
 from gcode_web.options.job_options import job_options_ui, job_options_server
@@ -13,82 +13,52 @@ _job_options_display_name = 'Job Options'
 _tool_options_display_name = 'Tool Options'
 
 
-def _render_panel(job: GCodeConfig):
-    names_and_uis = []
+@module.ui
+def job_ui(job: GCodeConfig):
+    names_ids_and_uis = []
     config_index = 0
 
-    names_and_uis.append((_job_options_display_name, job_options_ui(id=f'job_{job.id}_{config_index}', job=job)))
+    id = f'job_{config_index}'
+    names_ids_and_uis.append((_job_options_display_name, id, job_options_ui(id=id, job=job)))
+    # Open job options if no operations added
+    last_id = id
+    ui.update_accordion(id='accordion', show=last_id)
     config_index += 1
 
-    names_and_uis.append((_tool_options_display_name, tool_options_ui(id=f'job_{job.id}_{config_index}', config=job.tool_config)))
+    id = f'tool_{config_index}'
+    names_ids_and_uis.append((_tool_options_display_name, id, tool_options_ui(id=id, config=job.tool_config)))
+    config_index += 1
+
+    for config in job.operations:
+        id = f'op_{config_index}'
+        last_id = id
+        if isinstance(config, CircularPocket):
+            names_ids_and_uis.append((get_display_name(type(config)), id, circular_pocket_ui(id=id, config=config)))
+        config_index += 1
+
+    return ui.accordion(
+        id='accordion',
+        open=last_id,
+        *[ui.accordion_panel(name, each_ui, value=id) for name, id, each_ui in names_ids_and_uis]
+    )
+
+@module.server
+def job_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names: reactive.Value[list[str]]):
+
+    config_index = 0
+    job_name = job_options_server(
+        id=f'job_{config_index}',
+        job=job,
+        job_names=job_names
+    )
+    config_index += 1
+
+    tool_options_server(id=f'tool_{config_index}', config=job.tool_config)
     config_index += 1
 
     for config in job.operations:
         if isinstance(config, CircularPocket):
-            names_and_uis.append((get_display_name(type(config)), circular_pocket_ui(id=f'job_{job.id}_{config_index}', config=config)))
+            circular_pocket_server(id=f'op_{config_index}', config=config)
         config_index += 1
 
-    return ui.accordion(
-        *[ui.accordion_panel(name, each_ui) for name, each_ui in names_and_uis]
-    )
-
-
-@module.ui
-def job_config_panel_ui(job: GCodeConfig):
-    return ui.output_ui(id='content')
-
-
-@module.server
-def job_config_panel_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names: list, recalculate_job_names: reactive.Value, invalidated_job: reactive.Value):
-
-    invalidatable_job = reactive.Value(job)
-    set_job_name = reactive.Value(job.job_config.name)
-
-    @reactive.Effect
-    @reactive.event(invalidated_job)
-    def _invalidate_job():
-        if invalidated_job() == job.id:
-            invalidatable_job.set(None)
-            invalidatable_job.set(job)
-
-    @output
-    @render.ui
-    def content():
-        return _render_panel(invalidatable_job.get())
-
-    @reactive.Effect
-    @reactive.event(invalidatable_job)
-    def _install_servers():
-        config_index = 0
-        job_name = job_options_server(
-            id=f'job_{job.id}_{config_index}',
-            job=job,
-            job_names=job_names
-        )
-
-        @reactive.Effect
-        @reactive.event(job_name)
-        def update_job_name():
-            set_job_name.set(job_name())
-
-        config_index += 1
-
-        tool_options_server(id=f'job_{job.id}_{config_index}', config=job.tool_config)
-        config_index += 1
-
-        for config in job.operations:
-            if isinstance(config, CircularPocket):
-                circular_pocket_server(id=f'job_{job.id}_{config_index}', config=config)
-            config_index += 1
-
-        @reactive.Effect
-        @reactive.event(job_name)
-        def _force_job_names_recalculation():
-            recalculate_job_names.set(True)
-
-        @output
-        @render.text
-        def title():
-            return job_name.get()
-
-    return set_job_name
+    return job_name

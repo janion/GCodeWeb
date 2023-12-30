@@ -5,7 +5,6 @@ from gcode_web.output.gcode_config import GCodeConfig
 
 @module.ui
 def job_options_ui(job: GCodeConfig):
-    print(f'UI #{job.id} {job.job_config.name}')
     config = job.job_config
     return ui.div(
         ui.input_text(id='job_name', label='Name', value=config.name),
@@ -19,8 +18,7 @@ def job_options_ui(job: GCodeConfig):
 
 
 @module.server
-def job_options_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names):
-    print(f'Server #{job.id} - {job.job_config.name}')
+def job_options_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names: reactive.Value[list[str]]):
     config = job.job_config
 
     error_msg = reactive.Value('')
@@ -36,8 +34,6 @@ def job_options_server(input: Inputs, output: Outputs, session: Session, job: GC
 
         if old_name == config.name:
             return
-
-        print(f'Setting job name #{job.id}: {old_name} -> {config.name}')
 
     @reactive.Effect(priority=1)
     def set_clearance_height():

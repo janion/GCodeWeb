@@ -27,7 +27,7 @@ def gcode_output_panel_server(input: Inputs, output: Outputs, session: Session, 
             return ui.div(
                 ui.download_button(id='download_all_btn', label="Download All"),
                 ui.navset_tab(
-                    *[ui.nav(
+                    *[ui.nav_panel(
                         file.name,
                         gcode_file_output_panel_ui(id=f'output_{file.title}')
                     ) for file in files]

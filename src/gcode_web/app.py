@@ -1,9 +1,9 @@
 from shiny import App, Inputs, Outputs, Session, ui, reactive
 
 from gcode_web.sidebar import sidebar_ui, sidebar_server
-from gcode_web.config_panel import config_panel_ui, config_panel_server
 from gcode_web.output.gcode_output_panel import gcode_output_panel_ui, gcode_output_panel_server
-from gcode_web.output.gcode_file import GcodeFile
+
+from gcode_web.config_panel import jobs_panel_ui, jobs_panel_server
 
 app_ui = ui.page_sidebar(
     sidebar_ui(id='sidebar'),
@@ -11,7 +11,7 @@ app_ui = ui.page_sidebar(
         ui.row(
             ui.column(
                 6,
-                config_panel_ui('config_panel')
+                jobs_panel_ui('config_panel')
             ),
             ui.column(
                 6,
@@ -25,10 +25,10 @@ app_ui = ui.page_sidebar(
 
 def app_server(input: Inputs, output: Outputs, session: Session):
     job_configurations = reactive.Value([])
-    invalidated_job = reactive.Value(None)
+    modified_job_id = reactive.Value(None)
 
-    config_tab = config_panel_server(id='config_panel', job_configurations=job_configurations, invalidated_job=invalidated_job)
-    generated_files = sidebar_server(id='sidebar', config_tab=config_tab, job_configurations=job_configurations, invalidated_job=invalidated_job)
+    selected_job_id = jobs_panel_server(id='config_panel', jobs=job_configurations, modified_job_id=modified_job_id)
+    generated_files = sidebar_server(id='sidebar', selected_job_id=selected_job_id, job_configurations=job_configurations, modified_job_id=modified_job_id)
     gcode_output_panel_server(id='gcode_panel', generated_files=generated_files)
 
 

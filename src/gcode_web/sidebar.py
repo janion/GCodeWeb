@@ -1,5 +1,3 @@
-from re import search
-
 from shiny import Inputs, Outputs, Session, ui, module, reactive
 
 from gcode_web.output.gcode_config import GCodeConfig
@@ -48,31 +46,33 @@ def sidebar_ui():
 
 
 @module.server
-def sidebar_server(input: Inputs, output: Outputs, session: Session, config_tab, job_configurations, invalidated_job):
+def sidebar_server(input: Inputs, output: Outputs, session: Session, selected_job_id: reactive.Calc, job_configurations: reactive.Value[list[GCodeConfig]], modified_job_id: reactive.Value[int]):
     output_options = OutputOptions()
     output_options_server(id='output_options', config=output_options)
 
     @reactive.Effect
     @reactive.event(input.new_job_btn)
     def _add_job():
-        job_configurations.set(job_configurations.get() + [_create_new_job()])
+        new_job = _create_new_job()
+        job_configurations.set([*job_configurations.get(), new_job])
 
     @reactive.Effect
     @reactive.event(input.new_operation_btn)
     def _add_operation():
-        operation = get_type(input.operation_type())()
-
-        # TODO This should not be hard-coded
-        match = search('config_panel-job_([0-9]+)-title', config_tab())
-        job_id = int(match.group(1))
+        job_id = selected_job_id()
+        if job_id is None:
+            print("Selected tab not found.")
 
         job = next(job_config for job_config in job_configurations.get() if job_config.id == job_id)
+
+        operation = get_type(input.operation_type())()
         job.operations.append(operation)
 
-        # tmp = job_configurations.get()
-        # job_configurations.set([])
-        # job_configurations.set(tmp)
-        invalidated_job.set(job_id)
+        # TODO: This is currently a bit of a bodge
+        modified_job_id.set(selected_job_id())
+        temp = job_configurations.get()
+        job_configurations.set(None)
+        job_configurations.set(temp)
 
     gcode_files = reactive.Value([])
 
