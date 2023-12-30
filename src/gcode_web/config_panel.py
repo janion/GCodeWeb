@@ -13,11 +13,20 @@ def jobs_panel_ui():
 
 @module.server
 def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: reactive.Value[list[GCodeConfig]], modified_job_id: reactive.Value[int]):
+    removed_job = reactive.Value(None)
+
+    @reactive.Effect
+    @reactive.event(removed_job)
+    def _close():
+        jobs_list = [*jobs.get()]
+        jobs_list.remove(removed_job())
+        jobs.set(jobs_list)
+        removed_job.set(None)
+
     job_names = reactive.Value([])
     recalculate_job_names = reactive.Value(False)
 
     @reactive.Effect
-    @reactive.event(recalculate_job_names)
     def _manually_recalculate_job_names():
         if recalculate_job_names.get():
             job_names.set([job.job_config.name for job in jobs.get()])
@@ -41,7 +50,7 @@ def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: re
     @reactive.Effect
     def _install_servers():
         for job in jobs.get():
-            job_name = job_tab_server(id=f'tab_{job.id}', job=job, job_names=job_names)
+            job_name = job_tab_server(id=f'tab_{job.id}', job=job, job_names=job_names, removed_job=removed_job)
 
             @reactive.Effect
             @reactive.event(job_name)
