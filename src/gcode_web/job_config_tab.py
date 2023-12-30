@@ -6,7 +6,7 @@ from gcode_web.job_config_panel import job_config_panel_ui, job_config_panel_ser
 
 @module.ui
 def job_config_tab_ui(job: GCodeConfig):
-    return ui.nav(
+    return ui.nav_panel(
         ui.output_text(id='title'),
         job_config_panel_ui(id='config_panel', job=job)
     )

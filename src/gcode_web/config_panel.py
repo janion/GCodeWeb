@@ -5,15 +5,17 @@ from gcode_web.job_config_tab import job_config_tab_ui, job_config_tab_server
 
 def _create_jobs_navs(jobs: list):
     navs = []
-    index = 0
+    last_job_id = None
     for job in jobs:
         navs.append(job_config_tab_ui(id=f'job_{job.id}', job=job))
-        index += 1
+        last_job_id = job.id
 
     return ui.navset_tab(
-                *navs,
-                id='config_tabs'
-            )
+        *navs,
+        id='config_tabs',
+        # TODO this is a bodge, but it kinda works for now
+        selected=f'<div id="config_panel-job_{last_job_id}-title" class="shiny-text-output"></div>'
+    )
 
 
 @module.ui
@@ -52,7 +54,6 @@ def config_panel_server(input: Inputs, output: Outputs, session: Session, job_co
     @reactive.event(job_configurations)
     def _install_servers():
         jobs = job_configurations.get()
-        last_job_id = None
         for job in jobs:
             job_config_tab_server(
                 id=f'job_{job.id}',
@@ -61,11 +62,5 @@ def config_panel_server(input: Inputs, output: Outputs, session: Session, job_co
                 recalculate_job_names=recalculate_job_names,
                 invalidated_job=invalidated_job
             )
-            last_job_id = job.id
-
-        # Select the final tab
-        if last_job_id is not None:
-            # TODO this is a bodge, but it kinda works for now
-            ui.update_navs(id='config_tabs', selected=f'<div id="config_panel-job_{last_job_id}-title" class="shiny-text-output"></div>')
 
     return input.config_tabs

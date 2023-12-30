@@ -1,4 +1,3 @@
-import shiny.experimental as x
 from shiny import Inputs, Outputs, Session, ui, module, render, reactive
 
 from gcode_web.output.gcode_config import GCodeConfig
@@ -18,7 +17,7 @@ def _render_panel(job: GCodeConfig):
     names_and_uis = []
     config_index = 0
 
-    names_and_uis.append((_job_options_display_name, job_options_ui(id=f'job_{job.id}_{config_index}', config=job.job_config)))
+    names_and_uis.append((_job_options_display_name, job_options_ui(id=f'job_{job.id}_{config_index}', job=job)))
     config_index += 1
 
     names_and_uis.append((_tool_options_display_name, tool_options_ui(id=f'job_{job.id}_{config_index}', config=job.tool_config)))
@@ -29,8 +28,8 @@ def _render_panel(job: GCodeConfig):
             names_and_uis.append((get_display_name(type(config)), circular_pocket_ui(id=f'job_{job.id}_{config_index}', config=config)))
         config_index += 1
 
-    return x.ui.accordion(
-        *[x.ui.accordion_panel(name, each_ui) for name, each_ui in names_and_uis]
+    return ui.accordion(
+        *[ui.accordion_panel(name, each_ui) for name, each_ui in names_and_uis]
     )
 
 
@@ -57,14 +56,13 @@ def job_config_panel_server(input: Inputs, output: Outputs, session: Session, jo
     def content():
         return _render_panel(invalidatable_job.get())
 
-
     @reactive.Effect
     @reactive.event(invalidatable_job)
     def _install_servers():
         config_index = 0
         job_name = job_options_server(
             id=f'job_{job.id}_{config_index}',
-            config=job.job_config,
+            job=job,
             job_names=job_names
         )
 

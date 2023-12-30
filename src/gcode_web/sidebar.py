@@ -1,6 +1,5 @@
 from re import search
 
-import shiny.experimental as x
 from shiny import Inputs, Outputs, Session, ui, module, reactive
 
 from gcode_web.output.gcode_config import GCodeConfig
@@ -25,7 +24,7 @@ def _create_new_job():
 
 @module.ui
 def sidebar_ui():
-    return x.ui.sidebar(
+    return ui.sidebar(
         ui.input_action_button(id='clear_btn', label='Clear'),
         ui.input_action_button(id='new_job_btn', label='New Job'),
         ui.hr(),
@@ -36,9 +35,11 @@ def sidebar_ui():
         ),
         ui.input_action_button(id='new_operation_btn', label='Add Operation'),
         ui.hr(),
-        x.ui.accordion_panel(
-            'Output Options',
-            output_options_ui(id='output_options')
+        ui.accordion(
+            ui.accordion_panel(
+                'Output Options',
+                output_options_ui(id='output_options')
+            )
         ),
         ui.input_action_button(id='generate_gcode_btn', label='Generate GCode'),
         # ui.download_button(id='save_jobs_btn', label='Save Jobs'),

@@ -1,4 +1,3 @@
-import shiny.experimental as x
 from shiny import App, Inputs, Outputs, Session, ui, reactive
 
 from gcode_web.sidebar import sidebar_ui, sidebar_server
@@ -6,7 +5,7 @@ from gcode_web.config_panel import config_panel_ui, config_panel_server
 from gcode_web.output.gcode_output_panel import gcode_output_panel_ui, gcode_output_panel_server
 from gcode_web.output.gcode_file import GcodeFile
 
-app_ui = x.ui.page_sidebar(
+app_ui = ui.page_sidebar(
     sidebar_ui(id='sidebar'),
     ui.page_fluid(
         ui.row(
