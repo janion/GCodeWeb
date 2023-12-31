@@ -15,14 +15,14 @@ def job_tab_ui(job: GCodeConfig):
 
 
 @module.server
-def job_tab_server(input: Inputs, output: Outputs, session: Session, job:GCodeConfig, job_names: list[str], removed_job: reactive.Value[GCodeConfig]):
+def job_tab_server(input: Inputs, output: Outputs, session: Session, job:GCodeConfig, job_names: list[str], removed_job: reactive.Value[GCodeConfig], added_operation: reactive.Value[tuple[GCodeConfig, object]]):
     @reactive.Effect
     @reactive.event(input.close)
     def _remove_job():
         removed_job.set(job)
         _remove_job.destroy()
 
-    job_name = job_server(id='job', job=job, job_names=job_names)
+    job_name = job_server(id='job', job=job, job_names=job_names, added_operation=added_operation)
 
     @render.text
     def title():

@@ -25,10 +25,10 @@ app_ui = ui.page_sidebar(
 
 def app_server(input: Inputs, output: Outputs, session: Session):
     job_configurations = reactive.Value([])
-    modified_job_id = reactive.Value(None)
+    added_operation = reactive.Value()
 
-    selected_job_id = jobs_panel_server(id='config_panel', jobs=job_configurations, modified_job_id=modified_job_id)
-    generated_files = sidebar_server(id='sidebar', selected_job_id=selected_job_id, job_configurations=job_configurations, modified_job_id=modified_job_id)
+    selected_job_id = jobs_panel_server(id='config_panel', jobs=job_configurations, added_operation=added_operation)
+    generated_files = sidebar_server(id='sidebar', selected_job_id=selected_job_id, job_configurations=job_configurations, added_operation=added_operation)
     gcode_output_panel_server(id='gcode_panel', generated_files=generated_files)
 
 

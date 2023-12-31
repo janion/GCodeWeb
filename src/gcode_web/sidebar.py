@@ -46,14 +46,23 @@ def sidebar_ui():
 
 
 @module.server
-def sidebar_server(input: Inputs, output: Outputs, session: Session, selected_job_id: reactive.Calc, job_configurations: reactive.Value[list[GCodeConfig]], modified_job_id: reactive.Value[int]):
+def sidebar_server(
+        input: Inputs,
+        output: Outputs,
+        session: Session,
+        selected_job_id: reactive.Calc,
+        job_configurations: reactive.Value[list[GCodeConfig]],
+        added_operation: reactive.Value[tuple[GCodeConfig, object]]):
     output_options = OutputOptions()
     output_options_server(id='output_options', config=output_options)
+
+    gcode_files = reactive.Value([])
 
     @reactive.Effect
     @reactive.event(input.new_job_btn)
     def _add_job():
         new_job = _create_new_job()
+        # TODO: Ideally this would update the list, then simply add the tab. That functionality is not yet available in Shiny
         job_configurations.set([*job_configurations.get(), new_job])
 
     @reactive.Effect
@@ -68,13 +77,7 @@ def sidebar_server(input: Inputs, output: Outputs, session: Session, selected_jo
         operation = get_type(input.operation_type())()
         job.operations.append(operation)
 
-        # TODO: This is currently a bit of a bodge
-        modified_job_id.set(selected_job_id())
-        temp = job_configurations.get()
-        job_configurations.set(None)
-        job_configurations.set(temp)
-
-    gcode_files = reactive.Value([])
+        added_operation.set((job, operation))
 
     @reactive.Effect
     @reactive.event(input.generate_gcode_btn)

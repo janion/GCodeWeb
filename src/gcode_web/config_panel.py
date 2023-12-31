@@ -12,12 +12,13 @@ def jobs_panel_ui():
 
 
 @module.server
-def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: reactive.Value[list[GCodeConfig]], modified_job_id: reactive.Value[int]):
+def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: reactive.Value[list[GCodeConfig]], added_operation: reactive.Value[tuple[GCodeConfig, object]]):
     removed_job = reactive.Value(None)
 
     @reactive.Effect
     @reactive.event(removed_job)
     def _close():
+        # TODO: Ideally this would update the list, then simply remove the tab. That functionality is not yet available in Shiny
         jobs_list = [*jobs.get()]
         jobs_list.remove(removed_job())
         jobs.set(jobs_list)
@@ -32,7 +33,6 @@ def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: re
             job_names.set([job.job_config.name for job in jobs.get()])
             recalculate_job_names.set(False)
 
-    @output
     @render.ui
     def tabs():
         navs = []
@@ -50,17 +50,12 @@ def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: re
     @reactive.Effect
     def _install_servers():
         for job in jobs.get():
-            job_name = job_tab_server(id=f'tab_{job.id}', job=job, job_names=job_names, removed_job=removed_job)
+            job_name = job_tab_server(id=f'tab_{job.id}', job=job, job_names=job_names, removed_job=removed_job, added_operation=added_operation)
 
             @reactive.Effect
             @reactive.event(job_name)
             def _job_name_changed():
                 recalculate_job_names.set(True)
-
-    @reactive.Effect
-    def _select_tab():
-        ui.update_navs(id='tabs', selected=f'tab_{modified_job_id.get()}')
-        modified_job_id.set(None)
 
     @reactive.Calc
     def selected_job_id():
