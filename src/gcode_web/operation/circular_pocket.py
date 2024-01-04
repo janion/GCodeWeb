@@ -25,19 +25,19 @@ def circular_pocket_server(input: Inputs, output: Outputs, session: Session, con
     error_msg = reactive.Value('')
 
     @reactive.Effect(priority=1)
-    def set_centre():
+    def _set_centre():
         config.centre = [input.centre_x(), input.centre_y()]
 
     @reactive.Effect(priority=1)
-    def set_start_depth():
+    def _set_start_depth():
         config.start_depth = input.start_depth()
 
     @reactive.Effect(priority=1)
-    def set_diameter():
+    def _set_diameter():
         config.diameter = input.diameter()
 
     @reactive.Effect(priority=1)
-    def set_finishing_pass():
+    def _set_finishing_pass():
         config.finishing_pass = input.finishing_pass()
 
     @reactive.Effect
@@ -49,7 +49,7 @@ def circular_pocket_server(input: Inputs, output: Outputs, session: Session, con
         input.depth,
         input.finishing_pass
     )
-    def calculate_operation():
+    def _validate_operation():
         results = list(filter(lambda result: not result.success, config.validate()))
 
         if len(results) == 0:

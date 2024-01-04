@@ -5,12 +5,15 @@ from shiny import Inputs, Outputs, Session, ui, reactive, module, render
 from gcode_web.output.gcode_config import GCodeConfig
 from gcode_web.options.job_options import job_options_ui, job_options_server
 from gcode_web.options.tool_options import tool_options_ui, tool_options_server
-from gcode_web.operation.circular_pocket import circular_pocket_ui, circular_pocket_server
 from gcode_web.operation.display_names import get_display_name
 from gcode_web.operation.remove_operation_link import remove_operation_ui, remove_operation_server
 from gcode_web.job_name_panel import job_name_ui, job_name_server
 
+from gcode_web.operation.circular_pocket import circular_pocket_ui, circular_pocket_server
+from gcode_web.operation.rectangular_pocket import rectangular_pocket_ui, rectangular_pocket_server
+
 from conversational_gcode.operations.CircularPocket import CircularPocket
+from conversational_gcode.operations.RectangularPocket import RectangularPocket
 
 
 _job_options_display_name = 'Job Options'
@@ -20,12 +23,16 @@ _tool_options_display_name = 'Tool Options'
 def _create_operation_ui(id, operation):
     if isinstance(operation, CircularPocket):
         return circular_pocket_ui(id=id, config=operation)
+    elif isinstance(operation, RectangularPocket):
+        return rectangular_pocket_ui(id=id, config=operation)
     return None
 
 
 def _create_operation_server(op_id, del_id, job, operation):
     if isinstance(operation.operation, CircularPocket):
         circular_pocket_server(id=op_id, config=operation.operation)
+    elif isinstance(operation.operation, RectangularPocket):
+        rectangular_pocket_server(id=op_id, config=operation.operation)
 
     delete = remove_operation_server(id=del_id)
 

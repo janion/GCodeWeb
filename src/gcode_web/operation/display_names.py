@@ -1,8 +1,10 @@
 from conversational_gcode.operations.CircularPocket import CircularPocket
+from conversational_gcode.operations.RectangularPocket import RectangularPocket
 
 
 _display_names = {
-    CircularPocket: 'Circular Pocket'
+    CircularPocket: 'Circular Pocket',
+    RectangularPocket: 'Rectangular Pocket'
 }
 
 _types = {

@@ -9,11 +9,14 @@ from gcode_web.operation.unique_operation import UniqueOperation
 from conversational_gcode.options.Options import Options
 from conversational_gcode.options.OutputOptions import OutputOptions
 from conversational_gcode.GcodeGenerator import GcodeGenerator
+
 from conversational_gcode.operations.CircularPocket import CircularPocket
+from conversational_gcode.operations.RectangularPocket import RectangularPocket
 
 
 operations = [
-    CircularPocket
+    CircularPocket,
+    RectangularPocket
 ]
 
 
@@ -72,6 +75,7 @@ def sidebar_server(
         job_id = selected_job_id()
         if job_id is None:
             print("Selected tab not found.")
+            return
 
         job = next(job_config for job_config in job_configurations.get() if job_config.id == job_id)
 

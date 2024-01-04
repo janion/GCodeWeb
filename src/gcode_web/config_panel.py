@@ -60,6 +60,9 @@ def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: re
 
     @reactive.Calc
     def selected_job_id():
+        if input.tabs() is None:
+            return None
+
         match = search('tab_([0-9]+)', input.tabs())
         if match is None:
             return None

@@ -10,7 +10,16 @@ To launch in PyCharm, in the terminal, run the command `shiny run src/launcher.p
 - [X] Allow removal of jobs
 - [X] Hook-up download buttons for generated files
 - [X] Add "Download All" button for generated files
-- [ ] Add the other operations
+- [ ] Add all operations
+  - [X] Circular pocket
+  - [X] Rectangular pocket
+  - [ ] Circular profile
+  - [ ] Rectangular profile
+  - [ ] Drill
 - [ ] Add save and load functionality for configurations
 - [ ] Add ability to reorder operations
 - [ ] Add tool options to validation in app
+
+## Stretch Goals
+- Generalise operations UI & server generation
+- Add gcode visualisation
