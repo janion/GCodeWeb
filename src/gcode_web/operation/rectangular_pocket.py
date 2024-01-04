@@ -9,10 +9,20 @@ _CORNER = 'Corner'
 
 @module.ui
 def rectangular_pocket_ui(config: RectangularPocket):
+    if config.centre is not None:
+        selected_ref_type = _CENTRE
+        ref = config.centre
+    elif config.corner is not None:
+        selected_ref_type = _CORNER
+        ref = config.corner
+    else:
+        selected_ref_type = None
+        ref = [None, None]
+
     return ui.div(
-        ui.input_select(id='ref_type', label='Reference Location', choices=[_CENTRE, _CORNER], selected=_CENTRE),
-        ui.input_numeric(id='ref_x', label='X', value=config.centre[0]),
-        ui.input_numeric(id='ref_y', label='Y', value=config.centre[1]),
+        ui.input_select(id='ref_type', label='Reference Location', choices=[_CENTRE, _CORNER], selected=selected_ref_type),
+        ui.input_numeric(id='ref_x', label='X', value=ref[0]),
+        ui.input_numeric(id='ref_y', label='Y', value=ref[1]),
         ui.input_numeric(id='width', label='Width', value=config.width),
         ui.input_numeric(id='length', label='Length', value=config.length),
         ui.input_numeric(id='depth', label='Depth', value=config.depth),
