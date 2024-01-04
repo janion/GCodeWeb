@@ -8,6 +8,7 @@ from gcode_web.options.tool_options import tool_options_ui, tool_options_server
 from gcode_web.operation.circular_pocket import circular_pocket_ui, circular_pocket_server
 from gcode_web.operation.display_names import get_display_name
 from gcode_web.operation.remove_operation_link import remove_operation_ui, remove_operation_server
+from gcode_web.job_name_panel import job_name_ui, job_name_server
 
 from conversational_gcode.operations.CircularPocket import CircularPocket
 
@@ -72,13 +73,7 @@ def job_ui(job: GCodeConfig):
         )
 
     return ui.div(
-        ui.div(
-            ui.input_text(id='job_name', label='Name', value=job.name),
-            ui.div(
-                ui.output_text(id='error'),
-                style='color: red; font-style: italic;'
-            )
-        ),
+        job_name_ui(id='name', job=job),
         ui.accordion(
             id='accordion',
             open=last_id,
@@ -94,31 +89,7 @@ def job_ui(job: GCodeConfig):
 @module.server
 def job_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names: reactive.Value[list[str]], added_operation: reactive.Value[tuple[GCodeConfig, object]]):
 
-    # TODO: split job name into module
-    job_name = reactive.Value(job.name)
-    error_msg = reactive.Value('')
-
-    @reactive.Effect(priority=1)
-    @reactive.event(input.job_name, ignore_init=True)
-    def _set_name():
-        job.name = input.job_name()
-        job_name.set(input.job_name())
-
-    @reactive.Effect
-    @reactive.event(input.job_name, job_names)
-    def _validate_job_name():
-        if input.job_name() == '':
-            error_msg.set('Job must have name')
-        elif job_names.get().count(input.job_name()) > 1:
-            error_msg.set('Job must have unique name')
-        else:
-            error_msg.set('')
-
-    @output
-    @render.text
-    def error():
-        return error_msg.get()
-
+    job_name = job_name_server(id='name', job=job, job_names=job_names)
     job_options_server(id='job', job=job)
     tool_options_server(id='tool', config=job.tool_config)
 

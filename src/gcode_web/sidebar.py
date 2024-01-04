@@ -89,10 +89,10 @@ def sidebar_server(
             options = Options(job.tool_config, job.job_config, output_options)
             generator = GcodeGenerator(options)
             for op in job.operations:
-                generator.add_operation(op)
+                generator.add_operation(op.operation)
 
             commands = [command.format(output_options) for command in generator.generate()]
-            gcode_jobs.append(GcodeFile(job.job_config.name, commands))
+            gcode_jobs.append(GcodeFile(job.name, commands))
             index += 1
         gcode_files.set(gcode_jobs)
 
