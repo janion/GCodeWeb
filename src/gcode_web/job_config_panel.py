@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from shiny import Inputs, Outputs, Session, ui, reactive, module, render
+from shiny import Inputs, Outputs, Session, ui, reactive, module
 
 from gcode_web.output.gcode_config import GCodeConfig
 from gcode_web.options.job_options import job_options_ui, job_options_server
@@ -12,10 +12,12 @@ from gcode_web.job_name_panel import job_name_ui, job_name_server
 from gcode_web.operation.circular_pocket import circular_pocket_ui, circular_pocket_server
 from gcode_web.operation.rectangular_pocket import rectangular_pocket_ui, rectangular_pocket_server
 from gcode_web.operation.circular_profile import circular_profile_ui, circular_profile_server
+from gcode_web.operation.rectangular_profile import rectangular_profile_ui, rectangular_profile_server
 
 from conversational_gcode.operations.CircularPocket import CircularPocket
 from conversational_gcode.operations.RectangularPocket import RectangularPocket
 from conversational_gcode.operations.CircularProfile import CircularProfile
+from conversational_gcode.operations.RectangularProfile import RectangularProfile
 
 
 _job_options_display_name = 'Job Options'
@@ -29,6 +31,8 @@ def _create_operation_ui(id, operation):
         return rectangular_pocket_ui(id=id, config=operation)
     elif isinstance(operation, CircularProfile):
         return circular_profile_ui(id=id, config=operation)
+    elif isinstance(operation, RectangularProfile):
+        return rectangular_profile_ui(id=id, config=operation)
     return None
 
 
@@ -39,6 +43,8 @@ def _create_operation_server(op_id, del_id, job, operation):
         rectangular_pocket_server(id=op_id, config=operation.operation)
     elif isinstance(operation.operation, CircularProfile):
         circular_profile_server(id=op_id, config=operation.operation)
+    elif isinstance(operation.operation, RectangularProfile):
+        rectangular_profile_server(id=op_id, config=operation.operation)
 
     delete = remove_operation_server(id=del_id)
 
