@@ -30,7 +30,7 @@ def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: re
     @reactive.Effect
     def _manually_recalculate_job_names():
         if recalculate_job_names.get():
-            job_names.set([job.job_config.name for job in jobs.get()])
+            job_names.set([job.name for job in jobs.get()])
             recalculate_job_names.set(False)
 
     @render.ui

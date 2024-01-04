@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from shiny import Inputs, Outputs, Session, ui, reactive, module
+from shiny import Inputs, Outputs, Session, ui, reactive, module, render
 
 from gcode_web.output.gcode_config import GCodeConfig
 from gcode_web.options.job_options import job_options_ui, job_options_server
@@ -71,21 +71,55 @@ def job_ui(job: GCodeConfig):
             )
         )
 
-    return ui.accordion(
-        id='accordion',
-        open=last_id,
-        *[ui.accordion_panel(
-            item.name,
-            item.ui,
-            value=item.id,
-            icon=item.close_link
-        ) for item in names_ids_and_uis]
+    return ui.div(
+        ui.div(
+            ui.input_text(id='job_name', label='Name', value=job.name),
+            ui.div(
+                ui.output_text(id='error'),
+                style='color: red; font-style: italic;'
+            )
+        ),
+        ui.accordion(
+            id='accordion',
+            open=last_id,
+            *[ui.accordion_panel(
+                item.name,
+                item.ui,
+                value=item.id,
+                icon=item.close_link
+            ) for item in names_ids_and_uis]
+        )
     )
 
 @module.server
 def job_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfig, job_names: reactive.Value[list[str]], added_operation: reactive.Value[tuple[GCodeConfig, object]]):
 
-    job_name = job_options_server(id='job', job=job, job_names=job_names)
+    # TODO: split job name into module
+    job_name = reactive.Value(job.name)
+    error_msg = reactive.Value('')
+
+    @reactive.Effect(priority=1)
+    @reactive.event(input.job_name, ignore_init=True)
+    def _set_name():
+        job.name = input.job_name()
+        job_name.set(input.job_name())
+
+    @reactive.Effect
+    @reactive.event(input.job_name, job_names)
+    def _validate_job_name():
+        if input.job_name() == '':
+            error_msg.set('Job must have name')
+        elif job_names.get().count(input.job_name()) > 1:
+            error_msg.set('Job must have unique name')
+        else:
+            error_msg.set('')
+
+    @output
+    @render.text
+    def error():
+        return error_msg.get()
+
+    job_options_server(id='job', job=job)
     tool_options_server(id='tool', config=job.tool_config)
 
     for config in job.operations:

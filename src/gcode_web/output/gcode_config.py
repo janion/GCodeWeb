@@ -3,20 +3,27 @@ from conversational_gcode.options.ToolOptions import ToolOptions
 
 
 class GCodeConfig:
-    # TODO: Extract name to here, rather than on JobOptions
 
     _ID = 0
 
     def __init__(self):
         self._id = GCodeConfig._ID
         GCodeConfig._ID += 1
+        self._name = f'Job_{self._id}'
         self._job_config = JobOptions()
         self._tool_config = ToolOptions()
         self._operations = []
 
+    def _set_name(self, value):
+        self._name = value
+
     def _set_tool_config(self, tool_config):
         self._tool_config = tool_config
 
+    name = property(
+        fget=lambda self: self._name,
+        fset=_set_name
+    )
     id = property(
         fget=lambda self: self._id
     )
