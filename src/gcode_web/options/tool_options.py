@@ -3,8 +3,13 @@ from shiny import Inputs, Outputs, Session, ui, module, reactive, render
 from conversational_gcode.options.ToolOptions import ToolOptions
 
 
+_CONVENTIONAL = 'Conventional'
+_CLIMB = 'Climb'
+
+
 @module.ui
 def tool_options_ui(config: ToolOptions):
+    finishing_pass_type = _CLIMB if config.finishing_climb else _CONVENTIONAL
     return ui.div(
         ui.input_numeric(id='tool_flutes', label='Tool Flutes', value=config.tool_flutes),
         ui.input_numeric(id='tool_diameter', label='Tool Diameter', value=config.tool_diameter),
@@ -21,7 +26,12 @@ def tool_options_ui(config: ToolOptions):
 
         ui.input_numeric(id='finishing_pass', label='Finishing Pass Stepover', value=config.finishing_pass),
         ui.input_numeric(id='finishing_feed_rate', label='Finishing Feed Rate', value=config.finishing_feed_rate),
-        ui.input_checkbox(id='finishing_climb', label='Finishing Pass is Climb', value=config.finishing_climb),
+        ui.input_select(
+            id='finishing_climb',
+            label='Finishing Pass Direction',
+            choices=[_CONVENTIONAL, _CLIMB],
+            selected=finishing_pass_type
+        ),
 
         ui.div(
             ui.output_text(id='error'),
@@ -84,7 +94,7 @@ def tool_options_server(input: Inputs, output: Outputs, session: Session, config
 
     @reactive.Effect(priority=1)
     def set_finishing_climb():
-        config.finishing_climb = input.finishing_climb()
+        config.finishing_climb = input.finishing_climb() == _CLIMB
 
     @reactive.Effect
     @reactive.event(

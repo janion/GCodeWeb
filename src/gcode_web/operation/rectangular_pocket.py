@@ -9,10 +9,10 @@ _CORNER = 'Corner'
 
 @module.ui
 def rectangular_pocket_ui(config: RectangularPocket):
-    if config.centre is not None:
+    if config.centre is not None and None not in config.centre:
         selected_ref_type = _CENTRE
         ref = config.centre
-    elif config.corner is not None:
+    elif config.corner is not None and None not in config.corner:
         selected_ref_type = _CORNER
         ref = config.corner
     else:

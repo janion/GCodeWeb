@@ -12,10 +12,10 @@ _OUTSIDE = 'Outside'
 
 @module.ui
 def rectangular_profile_ui(config: RectangularProfile):
-    if config.centre is not None:
+    if config.centre is not None and None not in config.centre:
         selected_ref_type = _CENTRE
         ref = config.centre
-    elif config.corner is not None:
+    elif config.corner is not None and None not in config.corner:
         selected_ref_type = _CORNER
         ref = config.corner
     else:
