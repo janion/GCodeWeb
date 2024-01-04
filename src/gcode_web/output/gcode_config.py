@@ -3,6 +3,7 @@ from conversational_gcode.options.ToolOptions import ToolOptions
 
 
 class GCodeConfig:
+    # TODO: Extract name to here, rather than on JobOptions
 
     _ID = 0
 

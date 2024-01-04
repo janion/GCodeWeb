@@ -4,6 +4,7 @@ from gcode_web.output.gcode_config import GCodeConfig
 from gcode_web.output.gcode_file import GcodeFile
 from gcode_web.options.output_options import output_options_ui, output_options_server
 from gcode_web.operation.display_names import get_display_name, get_type
+from gcode_web.operation.unique_operation import UniqueOperation
 
 from conversational_gcode.options.Options import Options
 from conversational_gcode.options.OutputOptions import OutputOptions
@@ -74,7 +75,7 @@ def sidebar_server(
 
         job = next(job_config for job_config in job_configurations.get() if job_config.id == job_id)
 
-        operation = get_type(input.operation_type())()
+        operation = UniqueOperation(get_type(input.operation_type())())
         job.operations.append(operation)
 
         added_operation.set((job, operation))

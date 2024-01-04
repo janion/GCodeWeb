@@ -40,6 +40,7 @@ def jobs_panel_server(input: Inputs, output: Outputs, session: Session, jobs: re
         for job in jobs.get():
             navs.append(job_tab_ui(id=f'tab_{job.id}', job=job))
             last_job_id = job.id
+
         return ui.navset_tab(
             *navs,
             id='tabs',
