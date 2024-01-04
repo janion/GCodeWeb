@@ -13,9 +13,10 @@ To launch in PyCharm, in the terminal, run the command `shiny run src/launcher.p
 - [ ] Add all operations
   - [X] Circular pocket
   - [X] Rectangular pocket
-  - [ ] Circular profile
+  - [X] Circular profile
   - [ ] Rectangular profile
   - [ ] Drill
+- [ ] Add validation for XY coordinates
 - [ ] Add save and load functionality for configurations
 - [ ] Add ability to reorder operations
 - [ ] Add tool options to validation in app

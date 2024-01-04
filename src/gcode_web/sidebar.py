@@ -12,11 +12,13 @@ from conversational_gcode.GcodeGenerator import GcodeGenerator
 
 from conversational_gcode.operations.CircularPocket import CircularPocket
 from conversational_gcode.operations.RectangularPocket import RectangularPocket
+from conversational_gcode.operations.CircularProfile import CircularProfile
 
 
 operations = [
     CircularPocket,
-    RectangularPocket
+    RectangularPocket,
+    CircularProfile
 ]
 
 
