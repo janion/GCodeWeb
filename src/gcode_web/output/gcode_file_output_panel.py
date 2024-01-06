@@ -11,7 +11,6 @@ def gcode_file_output_panel_ui():
 
 @module.server
 def gcode_file_output_panel_server(input: Inputs, output: Outputs, session: Session, generated_file):
-    @output
     @render.ui
     def file_contents():
         content = []

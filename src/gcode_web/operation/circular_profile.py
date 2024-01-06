@@ -46,6 +46,10 @@ def circular_profile_server(input: Inputs, output: Outputs, session: Session, co
         config.diameter = input.diameter()
 
     @reactive.Effect(priority=1)
+    def _set_depth():
+        config.depth = input.depth()
+
+    @reactive.Effect(priority=1)
     def _set_is_inner():
         config.is_inner = input.in_out() == _INSIDE
 
@@ -66,7 +70,6 @@ def circular_profile_server(input: Inputs, output: Outputs, session: Session, co
         else:
             error_msg.set(results[0].message)
 
-    @output
     @render.text
     def error():
         return error_msg.get()

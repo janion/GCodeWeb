@@ -13,7 +13,6 @@ def gcode_output_panel_ui():
 
 @module.server
 def gcode_output_panel_server(input: Inputs, output: Outputs, session: Session, generated_files):
-    @output
     @render.ui
     def panel():
         files = generated_files.get()

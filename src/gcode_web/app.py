@@ -11,7 +11,7 @@ app_ui = ui.page_sidebar(
         ui.row(
             ui.column(
                 6,
-                jobs_panel_ui('config_panel')
+                jobs_panel_ui(id='config_panel')
             ),
             ui.column(
                 6,
