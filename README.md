@@ -16,6 +16,8 @@ To launch in PyCharm, in the terminal, run the command `shiny run src/launcher.p
   - [X] Circular profile
   - [X] Rectangular profile
   - [X] Drill
+  - [ ] Circular boss
+  - [ ] Rectangular boss
 - [ ] Add validation for XY coordinates
 - [ ] Add tooltips to all operation fields
 - [ ] Add drill type to drill operation, then hide options accordingly
