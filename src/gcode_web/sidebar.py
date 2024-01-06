@@ -1,3 +1,6 @@
+import traceback
+import sys
+
 from shiny import Inputs, Outputs, Session, ui, module, reactive
 
 from gcode_web.output.gcode_config import GCodeConfig
