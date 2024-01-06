@@ -1,14 +1,16 @@
-from conversational_gcode.operations.CircularPocket import CircularPocket
-from conversational_gcode.operations.RectangularPocket import RectangularPocket
-from conversational_gcode.operations.CircularProfile import CircularProfile
-from conversational_gcode.operations.RectangularProfile import RectangularProfile
+from conversational_gcode.operations.pocket.CircularPocket import CircularPocket
+from conversational_gcode.operations.pocket.RectangularPocket import RectangularPocket
+from conversational_gcode.operations.profile.CircularProfile import CircularProfile
+from conversational_gcode.operations.profile.RectangularProfile import RectangularProfile
+from conversational_gcode.operations.Drill import Drill
 
 
 _display_names = {
     CircularPocket: 'Circular Pocket',
     RectangularPocket: 'Rectangular Pocket',
     CircularProfile: 'Circular Profile',
-    RectangularProfile: 'Rectangular Profile'
+    RectangularProfile: 'Rectangular Profile',
+    Drill: 'Drill'
 }
 
 _types = {

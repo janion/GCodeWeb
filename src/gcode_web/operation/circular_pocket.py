@@ -1,6 +1,6 @@
 from shiny import Inputs, Outputs, Session, ui, module, reactive, render
 
-from conversational_gcode.operations.CircularPocket import CircularPocket
+from conversational_gcode.operations.pocket.CircularPocket import CircularPocket
 
 
 @module.ui

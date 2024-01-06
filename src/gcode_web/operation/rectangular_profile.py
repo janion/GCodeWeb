@@ -1,6 +1,6 @@
 from shiny import Inputs, Outputs, Session, ui, module, reactive, render
 
-from conversational_gcode.operations.RectangularProfile import RectangularProfile
+from conversational_gcode.operations.profile.RectangularProfile import RectangularProfile
 
 
 _CENTRE = 'Centre'

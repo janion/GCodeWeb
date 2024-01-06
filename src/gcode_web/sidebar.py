@@ -10,10 +10,13 @@ from conversational_gcode.options.Options import Options
 from conversational_gcode.options.OutputOptions import OutputOptions
 from conversational_gcode.GcodeGenerator import GcodeGenerator
 
-from conversational_gcode.operations.CircularPocket import CircularPocket
-from conversational_gcode.operations.RectangularPocket import RectangularPocket
-from conversational_gcode.operations.CircularProfile import CircularProfile
-from conversational_gcode.operations.RectangularProfile import RectangularProfile
+from conversational_gcode.operations.pocket.CircularPocket import CircularPocket
+from conversational_gcode.operations.pocket.RectangularPocket import RectangularPocket
+from conversational_gcode.operations.profile.CircularProfile import CircularProfile
+from conversational_gcode.operations.profile.RectangularProfile import RectangularProfile
+from conversational_gcode.operations.Drill import Drill
+
+from conversational_gcode.gcodes.GCodes import GCode
 
 
 operations = [
@@ -99,7 +102,11 @@ def sidebar_server(
             for op in job.operations:
                 generator.add_operation(op.operation)
 
-            commands = [command.format(output_options) for command in generator.generate()]
+            try:
+                commands = [command.format(output_options) for command in generator.generate()]
+            except Exception as exptn:
+                traceback.print_exception(*sys.exc_info())
+                commands = [GCode('Something went wrong. Please contact the app administrator for help.').format(output_options)]
             gcode_jobs.append(GcodeFile(job.name, commands))
             index += 1
         gcode_files.set(gcode_jobs)

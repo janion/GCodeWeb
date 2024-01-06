@@ -1,6 +1,6 @@
 from shiny import Inputs, Outputs, Session, ui, module, reactive, render
 
-from conversational_gcode.operations.RectangularPocket import RectangularPocket
+from conversational_gcode.operations.pocket.RectangularPocket import RectangularPocket
 
 
 _CENTRE = 'Centre'

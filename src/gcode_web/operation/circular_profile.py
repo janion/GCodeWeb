@@ -1,6 +1,6 @@
 from shiny import Inputs, Outputs, Session, ui, module, reactive, render
 
-from conversational_gcode.operations.CircularProfile import CircularProfile
+from conversational_gcode.operations.profile.CircularProfile import CircularProfile
 
 
 _INSIDE = 'Inside'

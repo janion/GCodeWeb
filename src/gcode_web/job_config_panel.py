@@ -14,10 +14,11 @@ from gcode_web.operation.rectangular_pocket import rectangular_pocket_ui, rectan
 from gcode_web.operation.circular_profile import circular_profile_ui, circular_profile_server
 from gcode_web.operation.rectangular_profile import rectangular_profile_ui, rectangular_profile_server
 
-from conversational_gcode.operations.CircularPocket import CircularPocket
-from conversational_gcode.operations.RectangularPocket import RectangularPocket
-from conversational_gcode.operations.CircularProfile import CircularProfile
-from conversational_gcode.operations.RectangularProfile import RectangularProfile
+from conversational_gcode.operations.pocket.CircularPocket import CircularPocket
+from conversational_gcode.operations.pocket.RectangularPocket import RectangularPocket
+from conversational_gcode.operations.profile.CircularProfile import CircularProfile
+from conversational_gcode.operations.profile.RectangularProfile import RectangularProfile
+from conversational_gcode.operations.Drill import Drill
 
 
 _job_options_display_name = 'Job Options'
