@@ -13,6 +13,7 @@ from gcode_web.operation.circular_pocket import circular_pocket_ui, circular_poc
 from gcode_web.operation.rectangular_pocket import rectangular_pocket_ui, rectangular_pocket_server
 from gcode_web.operation.circular_profile import circular_profile_ui, circular_profile_server
 from gcode_web.operation.rectangular_profile import rectangular_profile_ui, rectangular_profile_server
+from gcode_web.operation.drill import drill_ui, drill_server
 
 from conversational_gcode.operations.pocket.CircularPocket import CircularPocket
 from conversational_gcode.operations.pocket.RectangularPocket import RectangularPocket
@@ -34,6 +35,8 @@ def _create_operation_ui(id, operation):
         return circular_profile_ui(id=id, config=operation)
     elif isinstance(operation, RectangularProfile):
         return rectangular_profile_ui(id=id, config=operation)
+    elif isinstance(operation, Drill):
+        return drill_ui(id=id, config=operation)
     return None
 
 
@@ -46,6 +49,8 @@ def _create_operation_server(op_id, del_id, job, operation):
         circular_profile_server(id=op_id, config=operation.operation)
     elif isinstance(operation.operation, RectangularProfile):
         rectangular_profile_server(id=op_id, config=operation.operation)
+    elif isinstance(operation.operation, Drill):
+        drill_server(id=op_id, config=operation.operation)
 
     delete = remove_operation_server(id=del_id)
 

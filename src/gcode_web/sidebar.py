@@ -26,7 +26,8 @@ operations = [
     CircularPocket,
     RectangularPocket,
     CircularProfile,
-    RectangularProfile
+    RectangularProfile,
+    Drill
 ]
 
 
