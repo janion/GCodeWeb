@@ -39,11 +39,11 @@ def drill_ui(config: Drill):
     return ui.div(
         ui.div(
             'Centres',
-            ui.div(
-                ui.input_action_button(id='add_centre', label='+'),
-                style='display: inline-block;'
-            ),
-            style='border-color: red; border-style: solid;'
+            # ui.div(
+            #     ui.input_action_button(id='add_centre', label='+'),
+            #     style='display: inline-block;'
+            # ),
+            # style='border-color: red; border-style: solid;'
         ),
         # *[_render_drill_centre_ui(centre) for centre in config.centres],
         # ui.div(id='centres_anchor'),
@@ -58,7 +58,7 @@ def drill_ui(config: Drill):
         ui.input_numeric(id='start_depth', label='Start Depth', value=config.start_depth),
         ui.input_numeric(id='depth', label='Depth', value=config.depth),
         ui.input_numeric(id='peck_interval', label='Peck Interval', value=config.peck_interval),
-        ui.input_checkbox(id='dwell', label='Bottom Dwell', value=config.dwell),
+        ui.input_numeric(id='dwell', label='Bottom Dwell', value=config.dwell),
         ui.div(
             ui.output_text(id='error'),
             style='color: red; font-style: italic;'
@@ -98,11 +98,11 @@ def drill_server(input: Inputs, output: Outputs, session: Session, config: Drill
     def _set_centres():
         text = input.text_centres().replace(' ', '')
 
-        match = search('^(\\[[0-9]+,[0-9]+\\],?)+$', text)
+        match = search('^(\\[-?[0-9]+,-?[0-9]+\\],?)+$', text)
         if match is None:
             config.centres = []
         else:
-            config.centres = [eval(group) for group in findall('\\[[0-9]+,[0-9]+\\]', text)]
+            config.centres = [eval(group) for group in findall('\\[-?[0-9]+,-?[0-9]+\\]', text)]
 
     @reactive.Effect(priority=1)
     def _set_start_depth():

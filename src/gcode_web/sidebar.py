@@ -51,7 +51,8 @@ def sidebar_ui():
         ui.accordion(
             ui.accordion_panel(
                 'Output Options',
-                output_options_ui(id='output_options')
+                output_options_ui(id='output_options'),
+                open=False
             )
         ),
         ui.input_action_button(id='generate_gcode_btn', label='Generate GCode'),
