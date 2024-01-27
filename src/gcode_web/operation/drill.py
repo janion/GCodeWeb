@@ -118,7 +118,7 @@ def drill_server(input: Inputs, output: Outputs, session: Session, config: Drill
 
     @reactive.Effect(priority=1)
     def _set_dwell():
-        config.dwell = input.dwell()
+        config.dwell = 1000 * input.dwell() if input.dwell is not None else None
 
     @reactive.Effect
     @reactive.event(

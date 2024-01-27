@@ -125,20 +125,23 @@ def job_server(input: Inputs, output: Outputs, session: Session, job: GCodeConfi
     @reactive.event(added_operation, ignore_none=True)
     def _add_operation():
         updated_job, operation = added_operation()
-        if updated_job is job:
-            print(f'Adding Operation #{operation.id} to Job #{job.id}')
-            op_id = f'op_{operation.id}'
-            del_id = f'del_{operation.id}'
-            panel = ui.accordion_panel(
-                get_display_name(type(operation.operation)),
-                _create_operation_ui(op_id, operation.operation),
-                value=op_id,
-                icon=remove_operation_ui(id=del_id)
-            )
-            ui.insert_accordion_panel(id='accordion', panel=panel)
+        if updated_job is not job:
+            return
 
-            _create_operation_server(op_id, del_id, job, operation)
-            # TODO: This shouldn't be needed if ignore_init=True, but for some reason, it still is
-            added_operation.set(None)
+        print(f'Adding Operation #{operation.id} to Job #{job.id}')
+        op_id = f'op_{operation.id}'
+        del_id = f'del_{operation.id}'
+        panel = ui.accordion_panel(
+            get_display_name(type(operation.operation)),
+            _create_operation_ui(op_id, operation.operation),
+            value=op_id,
+            icon=remove_operation_ui(id=del_id)
+        )
+        ui.insert_accordion_panel(id='accordion', panel=panel)
+
+        _create_operation_server(op_id, del_id, job, operation)
+        # TODO: This shouldn't be needed if ignore_init=True, but for some reason, it still is.
+        # Still need to make a minimum reproducible example for GitHub issue.
+        added_operation.set(None)
 
     return job_name

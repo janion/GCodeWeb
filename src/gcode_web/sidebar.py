@@ -40,20 +40,18 @@ def sidebar_ui():
     return ui.sidebar(
         ui.input_action_button(id='clear_btn', label='Clear'),
         ui.input_action_button(id='new_job_btn', label='New Job'),
-        ui.hr(),
         ui.input_select(
             id='operation_type',
             label='Operation',
             choices=list([get_display_name(clazz) for clazz in operations])
         ),
         ui.input_action_button(id='new_operation_btn', label='Add Operation'),
-        ui.hr(),
         ui.accordion(
             ui.accordion_panel(
                 'Output Options',
-                output_options_ui(id='output_options'),
-                open=False
-            )
+                output_options_ui(id='output_options')
+            ),
+            open=False
         ),
         ui.input_action_button(id='generate_gcode_btn', label='Generate GCode'),
         # ui.download_button(id='save_jobs_btn', label='Save Jobs'),
